@@ -1,5 +1,5 @@
-name: update service
-run-name: update ${{ inputs.service }}
+name: Update Service
+run-name: Update ${{ inputs.service }}
 on:
   workflow_dispatch:
     inputs:
@@ -26,23 +26,22 @@ on:
 
 jobs:
   deploy:
-    name: deploy ${{ inputs.service }}
+    name: Deploy ${{ inputs.service }}
     runs-on: ubuntu-latest
     steps:
-      - name: connect to tailscale
+      - name: Connect to tailscale
         uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
-      - name: update ${{ inputs.service }}
+      - name: Update ${{ inputs.service }}
         run: |
-          mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          ssh sunny@orh-neh-ji.cyprus-fish.ts.net << EOF
-          cd /data/services/${{ github.event.inputs.service }}
+          ssh ${{ secrets.HOST }} << EOF
+          cd ${{secrets.PATH }}${{ github.event.inputs.service }}
           docker compose pull
           docker compose up -d
           docker image prune -af
