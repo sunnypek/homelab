@@ -1,0 +1,16 @@
+name: Update Seerr
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  pull_latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tailscale/github-action@v4
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          ping: orh-neh-ji.cyprus-fish.ts.net
