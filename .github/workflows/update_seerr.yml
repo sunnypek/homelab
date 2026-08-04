@@ -1,18 +1,23 @@
 name: Update Seerr
 
 on:
-  push:
-    branches: [ "main" ]
-
   workflow_dispatch:
 
 jobs:
   pull_latest:
     runs-on: ubuntu-latest
     steps:
-      - uses: tailscale/github-action@v4
+      - name: connect to tailscale
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
-          ping: orh-neh-ji.cyprus-fish.ts.net
+      - name: update seerr
+        run: |
+          ssh sunny@orh-neh-ji.cyprus-fish.ts.net << EOF
+          cd /data/services/seerr
+          docker compose pull
+          docker compose up -d
+          docker image prune -af
+          EOF
