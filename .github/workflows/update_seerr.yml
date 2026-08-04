@@ -1,11 +1,32 @@
-name: Update Seerr
-
+name: update service
+run-name: update ${{ inputs.service }}
 on:
   workflow_dispatch:
+    inputs:
+      service:
+        type: choice
+        options:
+          - seerr
+          - jellyfin
+          - bazarr
+          - flaresolverr
+          - homeassistant
+          - node-exporter
+          - radarr
+          - smartctl-exporter
+          - wordpress
+          - cross-seed
+          - go2rtc
+          - prometheus
+          - sonarr
+          - grafana
+          - nginx
+          - prowlarr
+          - transmission
 
 jobs:
   deploy:
-    name: Deploy Seerr
+    name: deploy ${{ inputs.service }}
     runs-on: ubuntu-latest
     steps:
       - name: connect to tailscale
@@ -14,14 +35,14 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
-      - name: update seerr
+      - name: update ${{ inputs.service }}
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           ssh sunny@orh-neh-ji.cyprus-fish.ts.net << EOF
-          cd /data/services/seerr
+          cd /data/services/${{ github.event.inputs.service }}
           docker compose pull
           docker compose up -d
           docker image prune -af
