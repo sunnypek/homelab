@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  pull_latest:
+  deploy:
+    name: Deploy Seerr
     runs-on: ubuntu-latest
     steps:
       - name: connect to tailscale
@@ -16,7 +17,7 @@ jobs:
       - name: update seerr
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets. SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           ssh sunny@orh-neh-ji.cyprus-fish.ts.net << EOF
